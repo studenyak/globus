@@ -18,3 +18,10 @@ def get_photo_by_geo(geo, radius=5):
                                     radius=radius,
                                     radius_units='km')
     return response['photos']
+
+
+# bbox - see description https://www.flickr.com/services/api/flickr.photos.search.html
+def get_photos_by_bbox(bbox):
+    if not isinstance(bbox, list):
+        return {'error': 'bbox should be a list'}
+    response = flickr.photos.search(bbox=)
