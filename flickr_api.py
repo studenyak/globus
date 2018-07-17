@@ -24,4 +24,13 @@ def get_photo_by_geo(geo, radius=5):
 def get_photos_by_bbox(bbox):
     if not isinstance(bbox, list):
         return {'error': 'bbox should be a list'}
-    response = flickr.photos.search(bbox=)
+
+    str_bbox = ','.join(map(str, bbox))
+    response = flickr.photos.search(bbox=str_bbox)
+    return response
+
+
+def get_photo_info(photo_id, secret=''):
+    response = flickr.photos.getInfo(photo_id=photo_id,
+                                     secret=secret)
+    return response
