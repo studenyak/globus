@@ -2,42 +2,15 @@ import logging
 import flickr_api
 import tests
 import utils
-import redis
 import json
 import data_generator
 
-redis_config = {'host': 'localhost',
-                'port': 6379,
-                'db': 0}
-
-rDb = redis.StrictRedis(host=redis_config['host'],
-                        port=redis_config['port'],
-                        db=redis_config['db'])
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def dump_redis_to_json(db=0):
-    res = list()
-    index = 0
-    for key in rDb.keys():
-        lat,lon = key.split(',')
-        val = rDb.get(key)
-        obj = dict()
-        obj['lat'] = float(lat)
-        obj['lon'] = float(lon)
-        obj['weight'] = json.loads(val)['weight']
-        res.insert(index, obj)
-        index += 1
-
-    with open('db.json', 'w') as outfile:
-        outfile.write(json.dumps(res))
-
-
 if __name__ == "__main__":
-    # dump_redis_to_json()
-
     data_generator.get_worldwide_data()
     # area = tests.get_orvietto_area()
     # response = flickr_api.get_photos_by_bbox([area['start']['lon'], area['start']['lat'],
