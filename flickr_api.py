@@ -2,8 +2,13 @@
 from flickrapi import FlickrAPI
 import logging
 
-FLICKR_PUBLIC = '0a0aa19115f64849d8481a442cb46346'
-FLICKR_SECRET = '01acb8879d01d906'
+# mapsya
+# FLICKR_PUBLIC = '0a0aa19115f64849d8481a442cb46346'
+# FLICKR_SECRET = '01acb8879d01d906'
+
+# globus
+FLICKR_PUBLIC = '2f34bb99b2beb563a6a28a4445b9da87'
+FLICKR_SECRET = '6b0d94ed553c94fe'
 flickr = FlickrAPI(FLICKR_PUBLIC, FLICKR_SECRET, format='parsed-json')
 
 logger = logging.getLogger(__name__)

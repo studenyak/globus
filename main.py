@@ -4,6 +4,7 @@ import tests
 import utils
 import json
 import data_generator
+import geo_db
 
 
 logging.basicConfig(level=logging.INFO)
@@ -11,7 +12,9 @@ logger = logging.getLogger(__name__)
 
 
 if __name__ == "__main__":
-    data_generator.get_worldwide_data()
+    geo_db.from_photosposts(1)
+    geo_db.to_json(1)
+    # data_generator.get_worldwide_data()
     # area = tests.get_orvietto_area()
     # response = flickr_api.get_photos_by_bbox([area['start']['lon'], area['start']['lat'],
     #                                           area['end']['lon'], area['end']['lat']])

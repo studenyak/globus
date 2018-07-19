@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 def get_worldwide_data():
-    for lon in range(81, 179):
-        for lat in range(-90, 89):
+    for lon in range(143, 180):
+        for lat in range(-90, 90):
             res = flickr_api.get_photos_by_bbox([lon, lat, lon + 1, lat + 1])
             weight = int(res['photos']['total'])
             logger.info(str(lat) + ',' + str(lon))
