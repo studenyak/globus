@@ -22,7 +22,7 @@ def from_json(db=0):
     json_data=open('db.json').read()
     data = json.loads(json_data)
     for obj in data:
-        write(obj['lat'], obj['lon'], {'weight': obj['weight']}, db)
+        set_by_location(obj['lat'], obj['lon'], {'weight': obj['weight']}, db)
 
 
 def from_photosposts(db=1):
@@ -30,7 +30,7 @@ def from_photosposts(db=1):
         json_data = open('photospots.mwong.ch/' + str(index) + '.json').read()
         data = json.loads(json_data)
         for obj in data:
-            write(obj['lat'], obj['lng'], {'weight': int(obj['c'])}, db)
+            set_by_location(obj['lat'], obj['lng'], {'weight': int(obj['c'])}, db)
 
 
 def to_json(db=0):
@@ -55,7 +55,18 @@ def exist(key, db=0):
     return value
 
 
-def write(lat, lon, obj, db=0):
+def get_by_location(lat, lon, db=0):
         key = str(lat) + ',' + str(lon)
+        return rDb_pool[db].get(key)
+
+
+def set_by_location(lat, lon, obj, db=0):
+        key = str(lat) + ',' + str(lon)
+        if not exist(key, db):
+            rDb_pool[db].set(key, json.dumps(obj))
+
+
+def set_by_photo_id(id, obj, db=1):
+        key = str(id)
         if not exist(key, db):
             rDb_pool[db].set(key, json.dumps(obj))

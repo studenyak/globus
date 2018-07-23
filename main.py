@@ -3,38 +3,47 @@ import flickr_api
 import tests
 import utils
 import json
-import data_generator
+import flickr_grabber
 import geo_db
+import subprocess
 
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-if __name__ == "__main__":
-    geo_db.from_photosposts(1)
-    geo_db.to_json(1)
-    # data_generator.get_worldwide_data()
-    # area = tests.get_orvietto_area()
-    # response = flickr_api.get_photos_by_bbox([area['start']['lon'], area['start']['lat'],
-    #                                           area['end']['lon'], area['end']['lat']])
-    #
-    # total = response['photos']['total']
-    # perpage = response['photos']['perpage']
-    # photo = response['photos']['photo']
-    #
-    # for index in range(0, perpage):
-    #     info = flickr_api.get_photo_info(photo[index]['id'])
-    #     key = str(info['photo']['location']['latitude']+','+info['photo']['location']['longitude'])
-    #     value = rDb.get(key)
-    #     if not value:
-    #         value = dict()
-    #         value['weight'] = 1
-    #         # value['photo'] = [info]
-    #     else:
-    #         value = json.loads(value)
-    #         value['weight'] += 1
-    #         # value['photo'].insert(int(value['weight']) - 1, info)
-    #     rDb.set(key, json.dumps(value))
+def run_flickr_grabbers(keys, str_bbox, pages_per_grabber):
+    process_pool = list()
+    for index in range(0, len(keys)):
+        process = subprocess.Popen(['python',
+                         'flickr_grabber.py',
+                         keys[index]["FLICKR_PUBLIC"],
+                         keys[index]["FLICKR_SECRET"],
+                         str_bbox,
+                         str(index),
+                         str(pages_per_grabber)])
+        process_pool.insert(index, process)
+    return process_pool
 
+
+if __name__ == "__main__":
+    json_data = open("flickr_keys.json").read()
+    keys = json.loads(json_data)
+    flickr_api.init(keys[0]["FLICKR_PUBLIC"],
+                    keys[0]["FLICKR_SECRET"])
+
+    area = tests.get_rome_area()
+    str_bbox = ','.join(map(str, [area['start']['lon'], area['start']['lat'],
+                                  area['end']['lon'], area['end']['lat']]))
+    response = flickr_api.get_photos_by_bbox(str_bbox)
+
+    total = int(response['photos']['total'])
+    perpage = int(response['photos']['perpage'])
+    pages = int(response['photos']['pages'])
+    photo = response['photos']['photo']
+    pages_per_grabber = total / len(keys)
+    pp = run_flickr_grabbers(keys, str_bbox, pages_per_grabber)
+
+    for process in pp:
+        process.wait()
 

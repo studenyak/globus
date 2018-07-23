@@ -2,16 +2,12 @@
 from flickrapi import FlickrAPI
 import logging
 
-# mapsya
-# FLICKR_PUBLIC = '0a0aa19115f64849d8481a442cb46346'
-# FLICKR_SECRET = '01acb8879d01d906'
-
-# globus
-FLICKR_PUBLIC = '2f34bb99b2beb563a6a28a4445b9da87'
-FLICKR_SECRET = '6b0d94ed553c94fe'
-flickr = FlickrAPI(FLICKR_PUBLIC, FLICKR_SECRET, format='parsed-json')
-
 logger = logging.getLogger(__name__)
+
+
+def init(flickr_public, flickr_secret):
+    global flickr
+    flickr = FlickrAPI(flickr_public, flickr_secret, format='parsed-json')
 
 
 def get_photo_by_geo(geo, radius=5):
@@ -26,12 +22,11 @@ def get_photo_by_geo(geo, radius=5):
 
 
 # bbox - see description https://www.flickr.com/services/api/flickr.photos.search.html
-def get_photos_by_bbox(bbox):
-    if not isinstance(bbox, list):
-        return {'error': 'bbox should be a list'}
+def get_photos_by_bbox(bbox, page=1):
+    # if not isinstance(bbox, list):
+    #     return {'error': 'bbox should be a list'}
 
-    str_bbox = ','.join(map(str, bbox))
-    response = flickr.photos.search(bbox=str_bbox)
+    response = flickr.photos.search(bbox=bbox, page='34')
     return response
 
 

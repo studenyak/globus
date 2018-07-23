@@ -31,11 +31,11 @@ def get_vatican_area():
 
 
 def get_rome_area():
-    start = {'lat': 41.766760,
-             'lon': 12.328421}
+    start = {'lat': 41.820262,
+             'lon': 12.415863}
 
-    end = {'lat': 42.036925,
-           'lon': 12.749842}
+    end = {'lat': 41.896974,
+           'lon': 12.632843}
 
     return {'start': start, 'end': end}
 
