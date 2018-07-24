@@ -67,6 +67,7 @@ def set_by_location(lat, lon, obj, db=0):
 
 
 def set_by_photo_id(id, obj, db=1):
-        key = str(id)
+        key = id
         if not exist(key, db):
             rDb_pool[db].set(key, json.dumps(obj))
+

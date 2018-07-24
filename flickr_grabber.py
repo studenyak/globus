@@ -32,20 +32,22 @@ def get_worldwide_data():
 
 if __name__ == "__main__":
     FLICKR_PUBLIC, FLICKR_SECRET, str_bbox = sys.argv[1:4]
-    index = int(sys.argv[4])
+    grabber_number = int(sys.argv[4])
     pages_per_grabber = int(sys.argv[5])
-    logger.info("grabber %s: %s", index, sys.argv)
+    logger.info("grabber %s: %s", grabber_number, sys.argv)
 
     flickr_api.init(FLICKR_PUBLIC, FLICKR_SECRET)
 
-    start_page = index * pages_per_grabber + 1
-    end_page = index * pages_per_grabber + pages_per_grabber
+    start_page = grabber_number * pages_per_grabber + 1
+    end_page = grabber_number * pages_per_grabber + pages_per_grabber
     for page in range(start_page, end_page):
-        logger.info("grabber %s: %s -> %s", index, start_page, end_page)
+        logger.info("grabber %s: %s -> %s", grabber_number, start_page, end_page)
         response = flickr_api.get_photos_by_bbox(str_bbox, page)
-        perpage = int(response['photos']['perpage'])
         photo = response['photos']['photo']
-        for index in range(0, perpage):
+        for index in range(0, len(photo)):
+            if geo_db.exist(photo[index]['id']):
+                continue
+
             info = flickr_api.get_photo_info(photo[index]['id'])
             lat = float(info['photo']['location']['latitude'])
             lon = float(info['photo']['location']['longitude'])
@@ -60,3 +62,4 @@ if __name__ == "__main__":
                 # value['photo'].insert(int(value['weight']) - 1, info)
             geo_db.set_by_location(lat, lon, value)
             geo_db.set_by_photo_id(photo[index]['id'], info)
+
