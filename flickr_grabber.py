@@ -9,10 +9,8 @@
 
 import flickr_api
 import logging
-import geo_db
 import sys
-import json
-
+import mongo_db as geo_db
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -49,17 +47,6 @@ if __name__ == "__main__":
                 continue
 
             info = flickr_api.get_photo_info(photo[index]['id'])
-            lat = float(info['photo']['location']['latitude'])
-            lon = float(info['photo']['location']['longitude'])
-            value = geo_db.get_by_location(lat, lon)
-            if not value:
-                value = dict()
-                value['weight'] = 1
-                # value['photo'] = [info]
-            else:
-                value = json.loads(value)
-                value['weight'] += 1
-                # value['photo'].insert(int(value['weight']) - 1, info)
-            geo_db.set_by_location(lat, lon, value)
-            geo_db.set_by_photo_id(photo[index]['id'], info)
+            geo_db.update(info['photo']['id'], info)
+
 

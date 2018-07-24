@@ -1,10 +1,7 @@
 import logging
 import flickr_api
 import tests
-import utils
 import json
-import flickr_grabber
-import geo_db
 import subprocess
 
 
@@ -42,8 +39,12 @@ if __name__ == "__main__":
     pages = int(response['photos']['pages'])
     photo = response['photos']['photo']
     pages_per_grabber = total / len(keys)
-    pp = run_flickr_grabbers(keys, str_bbox, pages_per_grabber)
+    process_pool = run_flickr_grabbers(keys, str_bbox, pages_per_grabber)
 
-    for process in pp:
-        process.wait()
+    try:
+        while True:
+            pass
+    except KeyboardInterrupt:
+        for process in process_pool:
+            process.kill()
 

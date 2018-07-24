@@ -6,16 +6,31 @@ redis_config = {'host': 'localhost',
                 'port': 6379
                 }
 
-rDb = redis.StrictRedis(host=redis_config['host'],
-                        port=redis_config['port'],
-                        db=0)
+rDb = redis.Redis(host=redis_config['host'],
+                  port=redis_config['port'],
+                  db=0)
 
 
-rDb_1 = redis.StrictRedis(host=redis_config['host'],
-                          port=redis_config['port'],
-                          db=1)
+rDb_1 = redis.Redis(host=redis_config['host'],
+                    port=redis_config['port'],
+                    db=1)
 
-rDb_pool = [rDb, rDb_1]
+
+rDb_2 = redis.Redis(host=redis_config['host'],
+                    port=redis_config['port'],
+                    db=2)
+
+
+rDb_3 = redis.Redis(host=redis_config['host'],
+                    port=redis_config['port'],
+                    db=3)
+
+
+rDb_4 = redis.Redis(host=redis_config['host'],
+                    port=redis_config['port'],
+                    db=4)
+
+rDb_pool = [rDb, rDb_1, rDb_2, rDb_3, rDb_4]
 
 
 def from_json(db=0):
@@ -66,8 +81,21 @@ def set_by_location(lat, lon, obj, db=0):
             rDb_pool[db].set(key, json.dumps(obj))
 
 
-def set_by_photo_id(id, obj, db=1):
-        key = id
+def set_by_photo_id(key, obj, db=1):
         if not exist(key, db):
             rDb_pool[db].set(key, json.dumps(obj))
+
+
+def update(id, info):
+    lat = float(info['photo']['location']['latitude'])
+    lon = float(info['photo']['location']['longitude'])
+    value = get_by_location(lat, lon)
+    if not value:
+        value = dict()
+        value['weight'] = 1
+    else:
+        value = json.loads(value)
+        value['weight'] += 1
+    set_by_location(lat, lon, value)
+    set_by_photo_id(id, info)
 
